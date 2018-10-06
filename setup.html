@@ -11,17 +11,23 @@
 <body>
     <section id="playlist-selection">
         <h1>Select a playlist</h1>
-        <select id="playlists">
-            <option>Select from your playlist</option>
+        <select id="playlist">
+            <option value="">Select from your playlist</option>
         </select>
+        <button id="setup">Setup</button>
     </section>
     <section id="error"></section>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
+    <script src="assets/javascript/database.js"></script>
     <script>
         const SEARCH_PARAMS = new URLSearchParams(window.location.search);
         const TOKEN = window.location.hash.split("=")[1];
         const ROOT_URL = 'http://127.0.0.1:5500';
+        const CONFIG_REF = firebase.database().ref("config");
+
+        var spotifyUserId = undefined;
 
         $(document).ready(function () {
             // User authenticated successfully
@@ -31,7 +37,7 @@
                     url: "https://api.spotify.com/v1/me",
                     method: 'GET',
                     success: function (data, status) {
-                        //return console.log("The returned data", data);
+                        spotifyUserId = data.id;
                         getPlaylists(data.id);
                     },
                     beforeSend: function (xhr, settings) {
@@ -53,6 +59,28 @@
                     .append(errorMessage)
                     .append(callToAction);
             }
+
+            $("#setup").click(function () {
+                if ($("#playlist").val() !== '') {
+                    // Save configuration to firebase
+                    CONFIG_REF
+                        .set({
+                            token: TOKEN,
+                            spotifyUserId: spotifyUserId,
+                            spotifyPlaylistId: $("#playlist").val()
+                        })
+                        .then(
+                            function () {
+                                window.location = "host.html"
+                            }
+                        )
+                        .catch(function (error) {
+                            alert(error);
+                        });
+                } else {
+                    alert("You need to select a playlist");
+                }
+            });
         });
 
         function getPlaylists(userId) {
@@ -66,7 +94,7 @@
                             .attr("value", playlist.id)
                             .text(playlist.name);
 
-                        $("#playlists").append(option);
+                        $("#playlist").append(option);
                     });
                 },
                 beforeSend: function (xhr, settings) {

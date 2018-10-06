@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Host</title>
+    <style>
+        .track {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .track img {
+            float: left;
+            margin-right: 10px;
+            clear: both;
+            height: 35px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Host</h1>
+    <p>
+        <img id="playlist-image">
+        <img id="qr-code">
+    </p>
+    <h2>Playlist: <span id="playlist-name"></span></h2>
+    <h3>Number of tracks: <span id="playlist-track-count"></span></h3>
+
+    <div id="tracks"></div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
+    <script src="assets/javascript/database.js"></script>
+    <script>
+        const CONFIG_REF = firebase.database().ref("config");
+        var config = undefined;
+
+        loadConfig();
+
+        function loadConfig() {
+            CONFIG_REF.once("value", function (snapshot) {
+                if (snapshot.val()) {
+                    config = snapshot.val();
+                    getPlaylistInfo();
+                }
+            });
+        }
+
+        function getPlaylistInfo() {
+            $.ajax({
+                url: "https://api.spotify.com/v1/playlists/" + config.spotifyPlaylistId,
+                method: 'GET',
+                success: function (data, status) {
+                    $("#playlist-name").text(data.name);
+                    $("#playlist-track-count").text(data.tracks.items.length);
+                    $("#playlist-image").attr("src", data.images[0].url);
+
+                    for (let i = 0; i < data.tracks.items.length; i++) {
+                        let trackInfo = data.tracks.items[i].track;
+                        let albumInfo = trackInfo.album;
+                        let artistInfo = trackInfo.artists[0];
+                        let track = $("<p>")
+                            .addClass("track")
+                            .append($("<img>").attr("src", albumInfo.images[2].url))
+                            .append($("<span>").html(artistInfo.name + " <br/><i>" + trackInfo.name + "</i>"));
+
+                        $("#tracks").append(track);
+
+                        console.log(trackInfo);
+                    }
+                    displayQR();
+                },
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
+                }
+            });
+        }
+
+        function appendTrack(trackInfo) {
+            let track = $("<p>");
+        }
+
+        function displayQR() {
+            let guestURL = 'http://localhost:5500/guest.html';
+            var queryURL = "http://api.qrserver.com/v1/create-qr-code/?data=" + guestURL + "&size=200x200";
+            $("#qr-code").attr("src", queryURL);
+        }
+    </script>
+</body>
+
+</html>
