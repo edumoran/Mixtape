@@ -1,14 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>test</title>
+    <title>Mixtape</title>
 </head>
-<body>
 
-    <h1>test</h1>
-    
+<body>
+    <h1>Authorize Mixtape</h1>
+    <a id="authorize" href="#">Start the party</a>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $("#authorize").on("click", function (e) {
+            e.preventDefault();
+            let client_id = "22c6bf8f33e4445896f7dfd87a6ebec4";
+            let redirect_uri = "http://127.0.0.1:5500/setup.html";
+            let scopes = [
+                'user-read-private',
+                'user-read-email',
+                'streaming',
+                'user-read-birthdate'
+            ];
+
+            let url = "https://accounts.spotify.com/authorize?" +
+                "client_id=" + client_id +
+                "&redirect_uri=" + redirect_uri +
+                "&scope=" + scopes.join(" ") +
+                "&response_type=token" +
+                "&show_dialog=true";
+
+            window.location = url;
+        });
+    </script>
 </body>
+
 </html>

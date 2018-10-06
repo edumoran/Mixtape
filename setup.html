@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Setup</title>
+</head>
+
+<body>
+    <section id="playlist-selection">
+        <h1>Select a playlist</h1>
+        <select id="playlists">
+            <option>Select from your playlist</option>
+        </select>
+    </section>
+    <section id="error"></section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        const SEARCH_PARAMS = new URLSearchParams(window.location.search);
+        const TOKEN = window.location.hash.split("=")[1];
+        const ROOT_URL = 'http://127.0.0.1:5500';
+
+        $(document).ready(function () {
+            // User authenticated successfully
+            if (SEARCH_PARAMS.has("error") === false) {
+                // Get user id & playlists
+                $.ajax({
+                    url: "https://api.spotify.com/v1/me",
+                    method: 'GET',
+                    success: function (data, status) {
+                        //return console.log("The returned data", data);
+                        getPlaylists(data.id);
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + TOKEN);
+                    }
+                });
+            }
+            // User authenticated failed
+            else {
+                $("#playlist-selection").hide();
+                let errorHeader = $("<h2>").text("Autentication failed");
+                let errorMessage = $("<p>").text(SEARCH_PARAMS.get("error"));
+                let callToAction = $("<a>")
+                    .attr("href", ROOT_URL)
+                    .text("Try again");
+
+                $("#error")
+                    .append(errorHeader)
+                    .append(errorMessage)
+                    .append(callToAction);
+            }
+        });
+
+        function getPlaylists(userId) {
+            $.ajax({
+                url: "https://api.spotify.com/v1/me/playlists",
+                method: 'GET',
+                success: function (data, status) {
+                    // Append user playlists to select control
+                    $.each(data.items, function (index, playlist) {
+                        let option = $("<option>")
+                            .attr("value", playlist.id)
+                            .text(playlist.name);
+
+                        $("#playlists").append(option);
+                    });
+                },
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + TOKEN);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
