@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Guest</title>
+  <style>
+    .track {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+
+    .track img {
+      float: left;
+      margin-right: 10px;
+      clear: both;
+      height: 35px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Guest</h1>
+  <p>
+    <p id="song-playing"></p>
+    <p id="player-status"></p>
+  </p>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
+  <script src="assets/javascript/database.js"></script>
+  <script>
+    const PLAYER_REF = firebase.database().ref("player");
+
+    $(document).ready(() => {
+      listenToPlayerStatus();
+    });
+
+    function listenToPlayerStatus() {
+      PLAYER_REF.on("value", function (playerSnapshot) {
+        if (playerSnapshot.val()) {
+          let playerStatus = playerSnapshot.val().paused ? 'Paused' : 'Playing';
+          $("#song-playing").text(`${playerSnapshot.val().song} - ${playerSnapshot.val().artist}`)
+          $("#player-status").text(playerStatus);
+
+        } else {
+          PLAYER_REF.set({
+            paused: true
+          });
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
