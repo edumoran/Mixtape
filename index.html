@@ -5,36 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mixtape</title>
+    <title>Mixtape Setup</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Permanent+Marker|Roboto+Mono:400,700"" rel=" stylesheet">
 </head>
 
 <body>
-    <h1>Authorize Mixtape</h1>
-    <a id="authorize" href="#">Start the party</a>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script>
-        $("#authorize").on("click", function (e) {
-            e.preventDefault();
-            let client_id = "22c6bf8f33e4445896f7dfd87a6ebec4";
-            let redirect_uri = "http://127.0.0.1:5500/setup.html";
-            let scopes = [
-                'user-read-private',
-                'user-read-email',
-                'streaming',
-                'user-read-birthdate'
-            ];
+    <header class="masthead d-flex">
+        <div class="container text-center my-auto">
+            <img src="assets/images/logo_no-shadow.png" class="img-fluid mx-auto d-block" id="mixtape">
+            <a class="btn btn" id="authorize" href="#">Start the party</a>
 
-            let url = "https://accounts.spotify.com/authorize?" +
-                "client_id=" + client_id +
-                "&redirect_uri=" + redirect_uri +
-                "&scope=" + scopes.join(" ") +
-                "&response_type=token" +
-                "&show_dialog=true";
+            <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+            <script>
+                $("#authorize").on("click", function (e) {
+                    e.preventDefault();
+                    let client_id = "22c6bf8f33e4445896f7dfd87a6ebec4";
+                    let redirect_uri = "http://127.0.0.1:5500/setup.html";
+                    let scopes = [
+                        'user-read-private',
+                        'user-read-email',
+                        'streaming',
+                        'user-read-birthdate'
+                    ];
 
-            window.location = url;
-        });
-    </script>
+                    let url = "https://accounts.spotify.com/authorize?" +
+                        "client_id=" + client_id +
+                        "&redirect_uri=" + redirect_uri +
+                        "&scope=" + scopes.join(" ") +
+                        "&response_type=token" +
+                        "&show_dialog=true";
+
+                    window.location = url;
+                });
+            </script>
 </body>
 
 </html>

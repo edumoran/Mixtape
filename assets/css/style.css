@@ -1,0 +1,52 @@
+body {
+    background: url(../images/splash_background.png) fixed;
+    background-size: cover;
+    font-family: 'Roboto Mono', monospace;
+    font-family: roboto;
+    color: white;
+}
+
+.masthead {
+    min-height: 30rem;
+    position: relative;
+    display: table;
+    width: 100%;
+    height: auto;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+}
+
+#mixtape {
+    max-width: 300px;
+}
+
+#playlist-selection {
+    margin-top: 20px;
+}
+
+#authorize {
+    margin-top: 20px;
+    background: #38bbd3;
+    color: white;
+    align-content: center;
+    cursor: pointer;
+    border: none;  
+}
+
+#playlist {
+    background: #38bbd3;
+    color: white;
+    align-content: center;
+    cursor: pointer;
+    border: none;  
+}
+
+#setup {
+    margin-left: 10px;
+    border-radius: 5px;
+    background: rgb(56, 187, 211);
+    color: white;
+    align-content: center;
+    cursor: pointer;
+    border: none;
+}
