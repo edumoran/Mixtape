@@ -29,10 +29,12 @@
             let client_id = "22c6bf8f33e4445896f7dfd87a6ebec4";
             let redirect_uri = "http://127.0.0.1:5500/setup.html";
             let scopes = [
-                'user-read-private',
-                'user-read-email',
                 'streaming',
-                'user-read-birthdate'
+                'user-read-birthdate',
+                'user-read-email',
+                'user-read-private',
+                'playlist-modify-private',
+                'playlist-modify-public'
             ];
 
             let url = "https://accounts.spotify.com/authorize?" +
