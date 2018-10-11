@@ -1,140 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <title>Guest</title>
-    <style>
-      html, body {
-        height: 100%;
-      }
 
-      body {
-        color: #fff;
-        display: -ms-flexbox;
-        display: flex;
-        max-width:680px;
-        margin:auto;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <title>Guest</title>
+  <style>
+    html, body {
+      height: 100%;
+    }
 
-      header {
-        background: #00B8D1;
-        padding: 25px;
-      }
+    header {
+      background: #00B8D1;
+      padding: 25px;
+    }
 
-      header img {
-        margin-right: 20px;
-      }
+    main {
+      border: 1px solid;
+      height: 100%;
+      position: relative;
+    }
 
-      main {
-        background-color: #333;
-        height: 100%;
-        position: relative;
-      }
-
-      #playlist-info {
-        margin-bottom:10px;
-      }
-
-      h6, h3 {
-        padding-bottom:5px;
-        margin:0;
-      }
-
-      #album-art {
-        max-width:100px;
-      }
-
-      #downvote {
-        width:100%;
-        margin:0 auto;
-      }
-
-      #search {
-        padding: 20px;
-        color: #00B8D1;
-      }
-
-      #results {
-        bottom: 0px;
-        overflow-y: auto;
-        padding: 10px;
-        position: absolute;
-        top: 80px;
-        width: 100%;
-      }
-
-      #results .media{
-        padding: 5px;
-      }
-
-      #results img{
-        margin-right: 10px;
-      }
-
-      #results h5{
-        margin: 0px;
-        margin-bottom:20px;
-      }
-
-
-      footer {
-        background-color: #333;
-        padding: 10px;
-        text-align: center;
-      }
-
-      ::-webkit-input-placeholder {
+    footer {
+      padding: 10px;
       text-align: center;
-      color: #00B8D1;
-      }
+    }
 
-      :-moz-placeholder { /* Firefox 18- */
-        text-align: center;  
-      }
+    ::-webkit-input-placeholder {
+   text-align: center;
+    }
 
-      ::-moz-placeholder {  /* Firefox 19+ */
-        text-align: center;  
-      }
+    :-moz-placeholder { /* Firefox 18- */
+      text-align: center;  
+    }
 
-    </style>
-  </head>
+    ::-moz-placeholder {  /* Firefox 19+ */
+      text-align: center;  
+    }
 
-  <body>
-    <div class="container d-flex w-100 h-100 mx-auto flex-column">
-      <header>
-        <div class="align-self-center" id="playlist-info">
-          <h6>Playlist</h6>
-          <h3 id="playlist-name"></h3>
+    :-ms-input-placeholder {  
+      text-align: center; 
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="container p-2" style="max-width:550px; background-color:#38bbd3; color:white;">
+    <section class="row mb-3 pl-2 pr-2">
+      <div class="col-12"><p class="mb-0">Playlist</p></div>
+      <div class="col-12"><h3 id="playlist-name"></h3></div>
+    </section>
+    <section class="row mb-3 pl-2 pr-2">
+      <img id="album-art" class="col-4 img-fluid" src="http://placehold.it/50x50" alt="album-cover">
+      <div class="col-8">
+        <div class="row">
+          <div class="col-12"><h3 id="song-playing"></h3></div>
+          <div class="col-12"><p id="artist-playing"></p></div>
+          <div class="col-12"><button class="w-100 btn btn-danger rounded" id="downvote">NEXT SONG, PLEASE!</button></div>
         </div>
-        <div class="media" id="track-info">
-          <img class="align-self-center img-fluid" id="album-art" src="http://placehold.it/100x100" alt="Generic placeholder image">
-          <div class="align-self-center media-body">
-            <h3 id="song-playing">NAME OF THE SONG</h3>
-            <h6 id="artist-playing">Artist</h6>
-            <button class="btn btn-danger rounded" id="downvote">NEXT SONG, PLEASE!</button>
-          </div>
-        </div>
-      </header>
-
-      <main>
-        <section id="search">
-            <input class="form-control" id="search" type="text" placeholder="SEARCH FOR ARTIST OR SONG"></input>
-          </section>
-        <section id="results">
-          <ul class="list-unstyled">
-            <li class="media">
-                <div class="align-self-center media-body" id="search-results">>
-              </div>
-            </li>
-          </ul>
-        </section>
-      </main>
-      <footer>
-        <img class="align-self-center" src="http://placehold.it/50x50" alt="Generic placeholder image">
-      </footer>
-    </div>
+      </div>
+    </section>
+  </div>
+  <div class="container p-2" style="max-width:550px; background-color:gray;">
+    <section class="row mt-2 pl-2 pr-2">
+      <div class="col-12">
+        <form id="search-form">
+          <input class="w-100 rounded" id="search" type="text" placeholder="SEARCH FOR ARTIST OR SONG"></input>
+        </form>
+      </div>
+    </section>
+    <section class="row mb-3 pl-2 pr-2">
+      <div id="search-results"></div>
+    </section>
+    <footer>
+      <img class="align-self-center" src="http://placehold.it/50x50" alt="Generic placeholder image">
+    </footer>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -279,12 +223,8 @@
           success: function (data, status) {
               console.log(data);
               playlistUri = data.uri;
-              for (let i = 0; i < data.tracks.items.length; i++) {
-                let trackInfo = data.tracks.items[i].track;
-                let albumInfo = trackInfo.album;
-                $("#playlist-name").text(data.name);
-                $("#album-art").attr("src", albumInfo.images[1].url)
-              };
+              $("#playlist-name").text(data.name);
+              $("#album-art").attr("src", albumInfo.images[2].url)
           },
 
           beforeSend: function (xhr, settings) {
