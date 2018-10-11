@@ -24,11 +24,12 @@
 <body>
     <h1>Host</h1>
     <p>
-        <img id="playlist-image">
+        <img id="playlist-image" height="200">
         <img id="qr-code">
     </p>
     <p>
         <p id="song-playing"></p>
+        <p>Downvotes: <span id="downvotes"></span></p>
         <button id="play-pause">Play</button>
     </p>
     <h2>Playlist: <span id="playlist-name"></span></h2>
@@ -42,31 +43,57 @@
     <script src="assets/javascript/database.js"></script>
     <script>
         const CONFIG_REF = firebase.database().ref("config");
+        const DOWNVOTES_REF = firebase.database().ref("downvotes");
         const PLAYER_REF = firebase.database().ref("player");
+        const PLAYLIST_REF = firebase.database().ref("playlist");
+
         var config = undefined;
+        var currentTrackId = undefined;
         var player = undefined;
         var playerId = undefined;
         var playerStatus = undefined;
         var playlistUri = undefined;
 
         window.onSpotifyWebPlaybackSDKReady = function () {
+            resetDownvotes();
             loadConfig();
+            listenToDownvotes();
             listenToPlayerStatus();
+            listenToPlaylistStatus();
         }
 
         function loadConfig() {
             CONFIG_REF.once("value", function (snapshot) {
                 if (snapshot.val()) {
                     config = snapshot.val();
+
                     getPlaylistInfo();
+                    displayQR();
                     initializePlayer();
                 }
+            });
+        }
+
+        function listenToDownvotes() {
+            DOWNVOTES_REF.on("value", function (downvotesSnapshot) {
+                if (downvotesSnapshot.val() && downvotesSnapshot.numChildren() > 1) {
+                    player.nextTrack();
+                    console.log("Song was downvoted!");
+                }
+                $("#downvotes").text(downvotesSnapshot.numChildren());
+            });
+        }
+
+        function listenToPlaylistStatus() {
+            PLAYLIST_REF.on("value", function (playerSnapshot) {
+                getPlaylistInfo();
             });
         }
 
         function listenToPlayerStatus() {
             PLAYER_REF.on("value", function (playerSnapshot) {
                 if (playerSnapshot.val()) {
+
                     $("#song-playing").text(`${playerSnapshot.val().song} - ${playerSnapshot.val().artist}`)
 
                 } else {
@@ -90,7 +117,11 @@
                     playlistUri = data.uri;
                     $("#playlist-name").text(data.name);
                     $("#playlist-track-count").text(data.tracks.items.length);
-                    $("#playlist-image").attr("src", data.images[0].url);
+                    if (data.images.length > 0) {
+                        $("#playlist-image").attr("src", data.images[0].url);
+                    }
+
+                    $(".track").remove();
 
                     for (let i = 0; i < data.tracks.items.length; i++) {
                         let trackInfo = data.tracks.items[i].track;
@@ -105,7 +136,6 @@
 
                         console.log(trackInfo);
                     }
-                    displayQR();
                 },
                 beforeSend: function (xhr, settings) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
@@ -138,17 +168,22 @@
             // Playback status updates
             player.addListener('player_state_changed', state => {
                 console.log("Player state changed", state);
-                let current_track = state.track_window.current_track;
-                let artist = current_track.artists.map(({ name }) => name).join(', ');
+                let currentTrack = state.track_window.current_track;
+                let artist = currentTrack.artists.map(({ name }) => name).join(', ');
 
                 let status = {
                     duration: state.duration,
                     paused: state.paused,
                     position: state.position,
-                    song: current_track.name,
+                    song: currentTrack.name,
                     artist
                 }
+
                 console.log(status);
+                if (currentTrackId != currentTrack.id) {
+                    resetDownvotes();
+                }
+                currentTrackId = currentTrack.id
                 updatePlayerStatus(status);
             });
 
@@ -165,6 +200,10 @@
 
             // Connect to the player!
             player.connect();
+        }
+
+        function resetDownvotes() {
+            DOWNVOTES_REF.set({});
         }
 
         $("#play-pause").click(function () {

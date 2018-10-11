@@ -26,23 +26,117 @@
   <p>
     <p id="song-playing"></p>
     <p id="player-status"></p>
+    <p>Downvotes: <span id="downvotes"></span></p>
+    <button id="downvote">Downvote</button>
   </p>
 
+  <section>
+    <h2> Search form</h2>
+    <form id="search-form">
+      <input id="search" type="text" />
+      <button type="submit">Search</button>
+    </form>
+  </section>
+
+  <section>
+    <h2> Search results</h2>
+    <div id="search-results"></div>
+  </section>
+
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
   <script src="assets/javascript/database.js"></script>
   <script>
+    const CONFIG_REF = firebase.database().ref("config");
+    const DOWNVOTES_REF = firebase.database().ref("downvotes");
     const PLAYER_REF = firebase.database().ref("player");
+    const PLAYLIST_REF = firebase.database().ref("playlist");
+    var config = undefined;
+    var paused = false;
 
     $(document).ready(() => {
+      loadConfig();
+      listenToDownvotes();
       listenToPlayerStatus();
     });
+
+    function loadConfig() {
+      CONFIG_REF.once("value", function (snapshot) {
+        if (snapshot.val()) {
+          config = snapshot.val();
+          bindAddToPlaylist();
+          bindDownvote();
+          bindSearchForm();
+        }
+      });
+    }
+
+    function listenToDownvotes() {
+      DOWNVOTES_REF.on("value", function (downvotesSnapshot) {
+        $("#downvotes").text(downvotesSnapshot.numChildren());
+      });
+    }
+
+    function bindSearchForm() {
+      $("#search-form").submit(function (e) {
+        e.preventDefault();
+
+        let query = $("#search").val().trim();
+
+        $("#search-results").empty();
+
+        $.ajax({
+          url: "https://api.spotify.com/v1/search",
+          method: "GET",
+          data: {
+            q: query,
+            type: "track"
+          },
+          beforeSend: function (xhr, settings) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
+          },
+
+          success: (response) => {
+            let tracks = response.tracks;
+            $.each(tracks.items, function (index, trackInfo) {
+              appendTrack("#search-results", trackInfo)
+            });
+          }
+        });
+
+      });
+    }
+
+    function appendTrack(container_selector, trackInfo) {
+      console.log(trackInfo);
+      let albumImage = trackInfo.album.images[2].url;
+      let artist = trackInfo.artists.map(({ name }) => name).join(', ');
+
+      let trackTemplate = $("<p>")
+        .addClass("track")
+        .append($("<img>").attr("src", albumImage))
+        .append($("<span>").html(trackInfo.name + " <br/><i>" + artist + "</i>"))
+        .append(
+          $(
+            "<button>",
+            {
+              class: 'add-to-playlist',
+              "data-uri": trackInfo.uri,
+              text: 'Add to playlist',
+            }
+          )
+        );
+
+      $(container_selector).append(trackTemplate);
+    }
 
     function listenToPlayerStatus() {
       PLAYER_REF.on("value", function (playerSnapshot) {
         if (playerSnapshot.val()) {
           let playerStatus = playerSnapshot.val().paused ? 'Paused' : 'Playing';
+
+          paused = playerSnapshot.val().paused;
+
           $("#song-playing").text(`${playerSnapshot.val().song} - ${playerSnapshot.val().artist}`)
           $("#player-status").text(playerStatus);
 
@@ -50,6 +144,45 @@
           PLAYER_REF.set({
             paused: true
           });
+        }
+      });
+    }
+
+    function bindAddToPlaylist() {
+      $(document).on("click", ".add-to-playlist", function (e) {
+        let uri = $(this).attr("data-uri");
+
+        addTrackToSpotifyPlaylist(uri);
+      });
+    }
+
+    function addTrackToSpotifyPlaylist(uri) {
+      $.ajax({
+        url: "https://api.spotify.com/v1/playlists/" + config.spotifyPlaylistId + "/tracks",
+        method: "POST",
+        data: JSON.stringify({
+          uris: [uri]
+        }),
+        beforeSend: function (xhr, settings) {
+          xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
+        },
+
+        success: (response) => {
+          PLAYLIST_REF.push({
+            uri: uri,
+            created_at: firebase.database.ServerValue.TIMESTAMP
+          });
+        }
+      });
+    }
+
+    function bindDownvote() {
+      $("#downvote").click(function (e) {
+        e.preventDefault();
+        if (!paused) {
+          DOWNVOTES_REF.push({ created_at: firebase.database.ServerValue.TIMESTAMP })
+        } else {
+          console.log("Click does nothing");
         }
       });
     }
