@@ -47,6 +47,10 @@
         margin:0;
       }
 
+      #nextConfirmLabel {
+        color: black;
+      }
+
       #album-art {
         max-width:100px;
       }
@@ -111,6 +115,24 @@
         text-align: center;  
       }
 
+    .swal-button {
+        padding: 7px 19px;
+        border-radius: 2px;
+        background-color: #38bbd3;
+        font-size: 12px;
+        border: 1px solid #38bbd3;
+        text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+    }
+
+    .swal-text {
+        background-color: white;
+        border: 1px solid white;
+        display: block;
+        text-align: center;
+        color: #61534e;
+        font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    }  
+
     </style>
   </head>
 
@@ -126,7 +148,9 @@
           <div class="align-self-center media-body">
             <h3 id="song-playing">NAME OF THE SONG</h3>
             <h6 id="artist-playing">Artist</h6>
+
             <button class="btn btn-danger rounded" id="downvote">Next!</button>
+            
           </div>
         </div>
       </header>
@@ -156,6 +180,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
   <script src="assets/javascript/database.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
   <script>
     const CONFIG_REF = firebase.database().ref("config");
     const DOWNVOTES_REF = firebase.database().ref("downvotes");
@@ -241,7 +266,6 @@
             }
           )
         );
-
       $(container_selector).append(trackTemplate);
     }
 
@@ -266,6 +290,7 @@
 
     function bindAddToPlaylist() {
       $(document).on("click", ".add-to-playlist", function (e) {
+        swal("You added a song to the mixtape!")
         let uri = $(this).attr("data-uri");
         addTrackToSpotifyPlaylist(uri);
       });
@@ -314,6 +339,7 @@
 
     function bindDownvote() {
       $("#downvote").click(function (e) {
+        swal("You voted to skip the song.")
         e.preventDefault();
         if (!paused) {
           DOWNVOTES_REF.push({ created_at: firebase.database.ServerValue.TIMESTAMP })
