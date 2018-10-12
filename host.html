@@ -152,7 +152,7 @@
         }
 
         function displayQR() {
-            let guestURL = 'https://edumoran.github.io/Mixtape/guest.html';
+            let guestURL = window.location.origin + "/guest.html";
             var queryURL = "http://api.qrserver.com/v1/create-qr-code/?data=" + guestURL + "&size=200x200";
             $("#qr-code").attr("src", queryURL);
         }
