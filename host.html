@@ -46,11 +46,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
-    <script src="assets/javascript/database.js"></script>
     <script src="assets/javascript/app.js"></script>
+    <script src="assets/javascript/app/host.js"></script>
     <script>
         window.onSpotifyWebPlaybackSDKReady = function () {
-            host.new();
+            app.host.new();
         };
     </script>
 </body>
