@@ -190,7 +190,7 @@
             // Playback status updates
             player.addListener('player_state_changed', state => {
                 console.log("Player state changed", state);
-                let current_track = state.track_window.current_track;
+                let currentTrack = state.track_window.current_track;
                 let artist = current_track.artists.map(({
                     name
                 }) => name).join(', ');
