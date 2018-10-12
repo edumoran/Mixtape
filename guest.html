@@ -1,49 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <title>Guest</title>
+    <style>
+      html, body {
+        height: 100%;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Guest</title>
-  <style>
-    .track {
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 10px;
-    }
+      .container {
+        padding:0;
+      }
 
-    .track img {
-      float: left;
-      margin-right: 10px;
-      clear: both;
-      height: 35px;
-    }
-  </style>
-</head>
+      body {
+        color: #fff;
+        display: -ms-flexbox;
+        display: flex;
+        max-width:680px;
+        margin:auto;
+      }
 
-<body>
-  <h1>Guest</h1>
-  <p>
-    <p id="song-playing"></p>
-    <p id="player-status"></p>
-    <p>Downvotes: <span id="downvotes"></span></p>
-    <button id="downvote">Downvote</button>
-  </p>
+      header {
+        background: #00B8D1;
+        padding: 25px;
+      }
 
-  <section>
-    <h2> Search form</h2>
-    <form id="search-form">
-      <input id="search" type="text" />
-      <button type="submit">Search</button>
-    </form>
-  </section>
+      header img {
+        margin-right: 20px;
+      }
 
-  <section>
-    <h2> Search results</h2>
-    <div id="search-results"></div>
-  </section>
+      main {
+        background-color: #333;
+        height: 100%;
+        position: relative;
+      }
+
+      #playlist-info {
+        margin-bottom:10px;
+      }
+
+      h6, h3 {
+        padding-bottom:5px;
+        margin:0;
+      }
+
+      #album-art {
+        max-width:100px;
+      }
+
+      #downvote {
+        width:100%;
+        margin:0 auto;
+      }
+
+      #search-form {
+        padding: 20px;
+        color: #00B8D1;
+      }
+
+      #results {
+        bottom: 0px;
+        overflow-y: auto;
+        padding: 10px;
+        position: absolute;
+        top: 80px;
+        width: 100%;
+      }
+
+      #results .media{
+        padding: 5px;
+      }
+
+      #results img{
+        margin-right: 10px;
+        width:60px;
+      }
+
+      #results p {
+        margin-bottom:0;
+      }
+
+      #results h5{
+        margin: 0px;
+        margin-bottom:20px;
+      }
+
+      footer {
+        background-color: #333;
+        padding: 10px;
+        text-align: center;
+      }
+
+      #footer-logo {
+        width: 30px;
+      }
+
+      ::-webkit-input-placeholder {
+      text-align: center;
+      color: #00B8D1;
+      }
+
+      :-moz-placeholder { /* Firefox 18- */
+        text-align: center;  
+      }
+
+      ::-moz-placeholder {  /* Firefox 19+ */
+        text-align: center;  
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="container d-flex w-100 h-100 mx-auto flex-column">
+      <header>
+        <div class="align-self-center" id="playlist-info">
+          <h6>Playlist</h6>
+          <h3 id="playlist-name"></h3>
+        </div>
+        <div class="media" id="track-info">
+          <img class="align-self-center img-fluid" id="album-art" src="http://placehold.it/100x100" alt="Generic placeholder image">
+          <div class="align-self-center media-body">
+            <h3 id="song-playing">NAME OF THE SONG</h3>
+            <h6 id="artist-playing">Artist</h6>
+            <button class="btn btn-danger rounded" id="downvote">Next!</button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section>
+            <form id="search-form">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="SEARCH" id="search">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                  </div>
+                </div>
+            </form>
+          </section>
+        <section id="results">
+          <ul class="list-unstyled" id="search-results"></ul>
+        </section>
+      </main>
+      <footer>
+        <img class="align-self-center" id="footer-logo" src="http://placehold.it/50x50" alt="Generic placeholder image">
+      </footer>
+    </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
   <script src="assets/javascript/database.js"></script>
   <script>
@@ -67,6 +177,7 @@
           bindAddToPlaylist();
           bindDownvote();
           bindSearchForm();
+          getPlaylistInfo();
         }
       });
     }
@@ -112,17 +223,21 @@
       let albumImage = trackInfo.album.images[2].url;
       let artist = trackInfo.artists.map(({ name }) => name).join(', ');
 
-      let trackTemplate = $("<p>")
-        .addClass("track")
-        .append($("<img>").attr("src", albumImage))
-        .append($("<span>").html(trackInfo.name + " <br/><i>" + artist + "</i>"))
+      let trackBody = $("<div>")
+        .addClass("align-self-center media-body")
+        .append($("<h6>").text(trackInfo.name))
+        .append($("<p>").text(artist));
+      let trackTemplate = $("<li>")
+        .addClass("track media")
+        .append($("<img>").attr("src", albumImage).addClass("align-self-center"))
+        .append(trackBody)
         .append(
           $(
             "<button>",
             {
-              class: 'add-to-playlist',
+              class: 'add-to-playlist btn btn-sm align-self-center',
               "data-uri": trackInfo.uri,
-              text: 'Add to playlist',
+              text: 'ADD',
             }
           )
         );
@@ -137,7 +252,8 @@
 
           paused = playerSnapshot.val().paused;
 
-          $("#song-playing").text(`${playerSnapshot.val().song} - ${playerSnapshot.val().artist}`)
+          $("#song-playing").text(`${playerSnapshot.val().song}`)
+          $("#artist-playing").text(`${playerSnapshot.val().artist}`)
           $("#player-status").text(playerStatus);
 
         } else {
@@ -151,7 +267,6 @@
     function bindAddToPlaylist() {
       $(document).on("click", ".add-to-playlist", function (e) {
         let uri = $(this).attr("data-uri");
-
         addTrackToSpotifyPlaylist(uri);
       });
     }
@@ -175,6 +290,27 @@
         }
       });
     }
+
+    function getPlaylistInfo() {
+      $.ajax({
+          url: "https://api.spotify.com/v1/playlists/" + config.spotifyPlaylistId,
+          method: 'GET',
+          success: function (data, status) {
+              console.log(data);
+              playlistUri = data.uri;
+              for (let i = 0; i < data.tracks.items.length; i++) {
+                let trackInfo = data.tracks.items[i].track;
+                let albumInfo = trackInfo.album;
+                $("#playlist-name").text(data.name);
+                $("#album-art").attr("src", albumInfo.images[1].url)
+              };
+          },
+
+          beforeSend: function (xhr, settings) {
+              xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
+          }
+      });
+    };
 
     function bindDownvote() {
       $("#downvote").click(function (e) {
