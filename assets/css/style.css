@@ -1,7 +1,7 @@
 body {
     background: url(../images/splash_background.png) fixed;
     background-size: cover;
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Helvetica", sans-serif;
     font-family: roboto;
     color: white;
 }
