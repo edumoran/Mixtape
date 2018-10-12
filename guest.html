@@ -4,10 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <title>Guest</title>
     <style>
       html, body {
         height: 100%;
+      }
+
+      .container {
+        padding:0;
       }
 
       body {
@@ -51,7 +56,7 @@
         margin:0 auto;
       }
 
-      #search {
+      #search-form {
         padding: 20px;
         color: #00B8D1;
       }
@@ -71,6 +76,11 @@
 
       #results img{
         margin-right: 10px;
+        width:60px;
+      }
+
+      #results p {
+        margin-bottom:0;
       }
 
       #results h5{
@@ -78,11 +88,14 @@
         margin-bottom:20px;
       }
 
-
       footer {
         background-color: #333;
         padding: 10px;
         text-align: center;
+      }
+
+      #footer-logo {
+        width: 30px;
       }
 
       ::-webkit-input-placeholder {
@@ -113,32 +126,34 @@
           <div class="align-self-center media-body">
             <h3 id="song-playing">NAME OF THE SONG</h3>
             <h6 id="artist-playing">Artist</h6>
-            <button class="btn btn-danger rounded" id="downvote">NEXT SONG, PLEASE!</button>
+            <button class="btn btn-danger rounded" id="downvote">Next!</button>
           </div>
         </div>
       </header>
 
       <main>
-        <section id="search">
-            <input class="form-control" id="search" type="text" placeholder="SEARCH FOR ARTIST OR SONG"></input>
+        <section>
+            <form id="search-form">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="SEARCH" id="search">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                  </div>
+                </div>
+            </form>
           </section>
         <section id="results">
-          <ul class="list-unstyled">
-            <li class="media">
-                <div class="align-self-center media-body" id="search-results">>
-              </div>
-            </li>
-          </ul>
+          <ul class="list-unstyled" id="search-results"></ul>
         </section>
       </main>
       <footer>
-        <img class="align-self-center" src="http://placehold.it/50x50" alt="Generic placeholder image">
+        <img class="align-self-center" id="footer-logo" src="http://placehold.it/50x50" alt="Generic placeholder image">
       </footer>
     </div>
 
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
   <script src="assets/javascript/database.js"></script>
   <script>
@@ -208,17 +223,21 @@
       let albumImage = trackInfo.album.images[2].url;
       let artist = trackInfo.artists.map(({ name }) => name).join(', ');
 
-      let trackTemplate = $("<p>")
-        .addClass("track")
-        .append($("<img>").attr("src", albumImage))
-        .append($("<span>").html(trackInfo.name + " <br/><i>" + artist + "</i>"))
+      let trackBody = $("<div>")
+        .addClass("align-self-center media-body")
+        .append($("<h6>").text(trackInfo.name))
+        .append($("<p>").text(artist));
+      let trackTemplate = $("<li>")
+        .addClass("track media")
+        .append($("<img>").attr("src", albumImage).addClass("align-self-center"))
+        .append(trackBody)
         .append(
           $(
             "<button>",
             {
-              class: 'add-to-playlist',
+              class: 'add-to-playlist btn btn-sm align-self-center',
               "data-uri": trackInfo.uri,
-              text: 'Add to playlist',
+              text: 'ADD',
             }
           )
         );
