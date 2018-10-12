@@ -8,21 +8,18 @@ app.host = {
     app.initializeDatabase();
 
     this.displayQR();
-    this.resetDownvotes();
-    this.resetPlaylist();
 
     this.loadConfiguration();
-    return false;
 
-    this.listenToPlayerStatus();
+    this.resetDownvotes();
     this.listenToDownvotes();
+    return false;
   },
 
-  resetDownvotes: function () {
-    app.downvotesRef.set({});
-  },
-  resetPlaylist: function () {
-    app.playlistRef.set({});
+  displayQR: function () {
+    let queryUrl = "http://api.qrserver.com/v1/create-qr-code/?data=" + this.guestUrl;
+
+    $("#qr-code").attr("src", queryUrl);
   },
 
   loadConfiguration: function () {
@@ -39,61 +36,20 @@ app.host = {
     });
   },
 
-  addPlaylistChild: function (track) {
-    app.playlistRef.transaction(
-      function (playlist) {
-        if (playlist === null) {
-          playlist = {};
-        }
-
-        playlist[track.id] = {
-
-        }
-
-        let playerIds = Object.keys(players);
-
-        if (playerIds.length < app.playerLimit) {
-          app.currentUser.role = "player";
-          players[app.currentUser.id] = {
-            name: app.currentUser.name,
-            selection: ''
-          };
-
-          return players;
-        }
-      },
-
-      function (error, committed) {
-        if (!committed) {
-          $("#error").text("Sorry the game is full, but you can still chat.");
-          $("#error-modal").modal("show");
-        }
-      }
-    );
-  },
-
   getPlaylistInfo: function () {
     let self = this;
 
     $.ajax({
       data: {
-        fields: 'description,uri'
+        fields: 'images,name,uri,tracks.items(track(id,name,album(images),artists))'
       },
       method: "GET",
       url: "https://api.spotify.com/v1/playlists/" + self.configuration.spotifyPlaylistId
     }).done(function (response) {
-      console.log(response);
-      return false;
       self.playlistUri = response.uri;
-
       self.displayPlaylistInfo(response);
-
-      $(".track").remove();
-
-      for (let i = 0; i < response.tracks.items.length; i++) {
-        self.appendTrack(response.tracks.items[i].track);
-      }
-
+      self.listenForNewTracks();
+      self.savePreviousTracksToDb(response.tracks.items);
       self.initializePlayer();
     }).fail(function ({ responseJSON: { error } }) {
       console.log(error.message);
@@ -111,19 +67,58 @@ app.host = {
     }
   },
 
-  appendTrack: function (trackInfo) {
-    let albumInfo = trackInfo.album;
-    let artist = trackInfo.artists.map(({ name }) => name).join(', ');
+  listenForNewTracks: function () {
+    let self = this;
+
+    app.playlistRef.orderByChild("createdAt").on("child_added", function (trackSnapshot) {
+      if (trackSnapshot.val()) {
+        self.appendTrack(trackSnapshot.val());
+      }
+    });
+  },
+
+  appendTrack: function ({ artist, image, id, name }) {
     let track = $("<p>")
       .addClass("track")
-      .append($("<img>").attr("src", albumInfo.images[2].url))
-      .append($("<span>").html(artist + " <br/><i>" + trackInfo.name + "</i>"));
+      .append($("<img>").attr("src", image))
+      .append($("<span>").html(artist + " <br/><i>" + name + "</i>"));
 
     $("#tracks").append(track);
   },
 
+  savePreviousTracksToDb: function (trackItems) {
+    let self = this;
+    //Clear playlist on db
+    app.playlistRef.set({});
+
+    // Append each track to db
+    $.each(trackItems, function (i, { track }) {
+      self.addTrackToDb(track);
+    });
+  },
+
+  addTrackToDb: function (track) {
+    app.playlistRef.transaction(function (playlist) {
+      if (playlist === null) {
+        playlist = {};
+      }
+
+      playlist[track.id] = {
+        name: track.name,
+        artist: track.artists.map(({ name }) => name).join(', '),
+        image: track.album.images[track.album.images.length - 1].url,
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      };
+
+      return playlist;
+    });
+  },
+
   initializePlayer: function () {
     let self = this;
+
+    // Set player pause state on db
+    app.playerRef.set({ paused: true });
 
     self.player = new Spotify.Player({
       name: 'Mixtape Web Player',
@@ -153,12 +148,14 @@ app.host = {
     self.player.addListener('player_state_changed', state => {
       let currentTrack = state.track_window.current_track;
       let artist = currentTrack.artists.map(({ name }) => name).join(', ');
+      let image = currentTrack.album.images[0].url;
       let status = {
+        artist,
         duration: state.duration,
+        image,
         paused: state.paused,
         position: state.position,
-        song: currentTrack.name,
-        artist
+        song: currentTrack.name
       }
 
       if (self.currentTrackId !== currentTrack.id) {
@@ -174,6 +171,7 @@ app.host = {
     self.player.addListener('ready', ({ device_id }) => {
       self.playerId = device_id;
       self.bindPlayPauseClick();
+      self.listenToPlayerStatus();
     });
 
     // Not Ready
@@ -189,14 +187,7 @@ app.host = {
     app.playerRef.update(status);
   },
 
-  displayQR: function () {
-    let queryUrl = "http://api.qrserver.com/v1/create-qr-code/?data=" + this.guestUrl;
-
-    $("#qr-code").attr("src", queryUrl);
-  },
-
   bindPlayPauseClick: function () {
-    console.log("BINDED");
     let self = this;
 
     $("#play-pause").click(function () {
@@ -220,6 +211,27 @@ app.host = {
     });
   },
 
+  listenToPlayerStatus: function () {
+    let self = this;
+
+    app.playerRef.on("value", function (playerSnapshot) {
+      $("#play-pause").text("PLAY");
+
+      if (playerSnapshot.val()) {
+        $("#song-playing").text(playerSnapshot.val().song);
+        $("#artist").text(playerSnapshot.val().artist);
+        $("#playlist-image").attr("src", playerSnapshot.val().image);
+        if (!playerSnapshot.val().paused) {
+          $("#play-pause").text("PAUSE");
+        }
+      }
+    });
+  },
+
+  resetDownvotes: function () {
+    app.downvotesRef.set({});
+  },
+
   listenToDownvotes: function () {
     let self = this;
 
@@ -229,34 +241,5 @@ app.host = {
         self.discardedSongSound.play();
       }
     })
-  },
-
-  listenToPlaylistStatus: function () {
-    let self = this;
-
-    app.playlistRef.on("value", function () {
-      self.getPlaylistInfo();
-    });
-  },
-
-  listenToPlayerStatus: function () {
-    let self = this;
-
-    app.playerRef.on("value", function (playerSnapshot) {
-      $("#play-pause").text("Play");
-
-      if (playerSnapshot.val()) {
-        $("#song-playing").text(playerSnapshot.val().song);
-        $("#artist").text(playerSnapshot.val().artist);
-
-        if (!playerSnapshot.val().paused) {
-          $("#play-pause").text("Pause");
-        }
-      } else {
-        app.playerRef.set({
-          paused: true
-        });
-      }
-    });
   }
 };
