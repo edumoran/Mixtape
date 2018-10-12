@@ -152,7 +152,9 @@
         }
 
         function displayQR() {
-            let guestURL = window.location.origin + "/guest.html";
+            let guestURL = window.location.origin +
+                window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) +
+                "/guest.html";
             var queryURL = "http://api.qrserver.com/v1/create-qr-code/?data=" + guestURL + "&size=200x200";
             $("#qr-code").attr("src", queryURL);
         }

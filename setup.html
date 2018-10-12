@@ -36,7 +36,7 @@
     <script>
         const SEARCH_PARAMS = new URLSearchParams(window.location.search);
         const TOKEN = window.location.hash.split("=")[1];
-        const ROOT_URL = window.location.origin;
+        const ROOT_URL = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
         const CONFIG_REF = firebase.database().ref("config");
 
         var spotifyUserId = undefined;
