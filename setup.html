@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     <title>Mixtape Setup</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-
 </head>
 
 <body>
     <header class="masthead d-flex">
         <div class="container text-center my-auto">
-            <img src="assets/images/logo_no-shadow.png" class="img-fluid mx-auto d-block" id="mixtape">
+            <img id="mixtape" class="img-fluid mx-auto d-block" src="assets/images/logo_no-shadow.png">
 
-            <section id="playlist-selection">
+            <section id="playlist-selection" class="d-none">
                 <div class="btn-group">
-                    <select class="form-control" id="playlist">
+                    <select id="playlist" class="form-control">
                         <option value="">SELECT FROM YOUR PLAYLISTS</option>
                     </select>
-                    <a class="btn" id="setup">LOAD</a>
+                    <a id="setup" class="btn">LOAD</a>
+                </div>
             </section>
 
             <section id="error"></section>
@@ -32,88 +33,9 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
     <script src="assets/javascript/database.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="assets/javascript/app.js"></script>
     <script>
-        const SEARCH_PARAMS = new URLSearchParams(window.location.search);
-        const TOKEN = window.location.hash.split("=")[1];
-        const ROOT_URL = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
-        const CONFIG_REF = firebase.database().ref("config");
-
-        var spotifyUserId = undefined;
-
-        $(document).ready(function () {
-            // User authenticated successfully
-            if (SEARCH_PARAMS.has("error") === false) {
-                // Get user id & playlists
-                $.ajax({
-                    url: "https://api.spotify.com/v1/me",
-                    method: 'GET',
-                    success: function (data, status) {
-                        spotifyUserId = data.id;
-                        getPlaylists(data.id);
-                    },
-                    beforeSend: function (xhr, settings) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + TOKEN);
-                    }
-                });
-            }
-            // User authenticated failed
-            else {
-                $("#playlist-selection").hide();
-                let errorHeader = $("<h2>").text("Autentication failed");
-                let errorMessage = $("<p>").text(SEARCH_PARAMS.get("error"));
-                let callToAction = $("<a>")
-                    .attr("href", ROOT_URL)
-                    .text("Try again");
-
-                $("#error")
-                    .append(errorHeader)
-                    .append(errorMessage)
-                    .append(callToAction);
-            }
-
-            $("#setup").click(function () {
-                if ($("#playlist").val() !== '') {
-                    // Save configuration to firebase
-                    CONFIG_REF
-                        .set({
-                            token: TOKEN,
-                            spotifyUserId: spotifyUserId,
-                            spotifyPlaylistId: $("#playlist").val()
-                        })
-                        .then(
-                            function () {
-                                window.location = "host.html"
-                            }
-                        )
-                        .catch(function (error) {
-                            alert(error);
-                        });
-                } else {
-                    swal("You need to select a playlist!")
-                }
-            });
-        });
-
-        function getPlaylists(userId) {
-            $.ajax({
-                url: "https://api.spotify.com/v1/me/playlists",
-                method: 'GET',
-                success: function (data, status) {
-                    // Append user playlists to select control
-                    $.each(data.items, function (index, playlist) {
-                        let option = $("<option>")
-                            .attr("value", playlist.id)
-                            .text(playlist.name);
-
-                        $("#playlist").append(option);
-                    });
-                },
-                beforeSend: function (xhr, settings) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + TOKEN);
-                }
-            });
-        }
+        playlistSetup.new();
     </script>
 </body>
 
