@@ -1,7 +1,3 @@
-const appConfig = {
-  spotifyAppClientId: '22c6bf8f33e4445896f7dfd87a6ebec4'
-};
-
 const authorizationRequester = {
   redirectUri: window.location.origin + "/setup.html",
   scopes: [
@@ -13,6 +9,7 @@ const authorizationRequester = {
     'playlist-modify-public',
     'playlist-read-private'
   ],
+  spotifyAppClientId: '22c6bf8f33e4445896f7dfd87a6ebec4',
 
   new: function () {
     this.bindAuthorizeClick();
@@ -29,13 +26,14 @@ const authorizationRequester = {
 
   authorizationUrl: function () {
     return "https://accounts.spotify.com/authorize?" +
-      "client_id=" + appConfig.spotifyAppClientId +
+      "client_id=" + this.spotifyAppClientId +
       "&redirect_uri=" + this.redirectUri +
       "&scope=" + this.scopes.join(" ") +
       "&response_type=token" +
       "&show_dialog=true";
   }
 };
+
 
 const playlistSetup = {
   configRef: firebase.database().ref("config"),
@@ -157,6 +155,7 @@ const playlistSetup = {
       .append(callToAction);
   }
 };
+
 
 const host = {
   configuration: undefined,
@@ -377,6 +376,176 @@ const host = {
         }
       } else {
         self.playerRef.set({
+          paused: true
+        });
+      }
+    });
+  }
+};
+
+const guest = {
+  configuration: undefined,
+
+  configRef: firebase.database().ref("config"),
+  downvotesRef: firebase.database().ref("downvotes"),
+  playerRef: firebase.database().ref("player"),
+  playlistRef: firebase.database().ref("playlist"),
+
+  new: function () {
+    let self = this;
+
+    $(document).ready(function () {
+      self.loadConfiguration();
+      self.listenToPlayerStatus();
+    });
+  },
+
+  loadConfiguration: function () {
+    let self = this;
+
+    self.configRef.once("value", function (snapshot) {
+      if (snapshot.val()) {
+        self.configuration = snapshot.val();
+        self.setAjaxRequestHeaders();
+        self.bindAddToPlaylistClick();
+        self.bindDownvote();
+        self.bindSearchForm();
+        self.getPlaylistInfo();
+      }
+    });
+  },
+
+  setAjaxRequestHeaders: function () {
+    let self = this;
+
+    $.ajaxSetup({
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + self.configuration.token);
+      }
+    });
+  },
+
+  bindAddToPlaylistClick: function () {
+    let self = this;
+
+    $(document).on("click", ".add-to-playlist", function (e) {
+      let uri = $(this).attr("data-uri");
+      self.addTrackToSpotifyPlaylist(uri);
+    });
+  },
+
+  addTrackToSpotifyPlaylist: function (trackUri) {
+    let self = this;
+
+    $.ajax({
+      data: JSON.stringify({ uris: [trackUri] }),
+      method: "POST",
+      url: "https://api.spotify.com/v1/playlists/" + self.configuration.spotifyPlaylistId + "/tracks",
+    }).then(function (response) {
+      playlistRef.push({
+        uri: trackUri,
+        created_at: firebase.database.ServerValue.TIMESTAMP
+      });
+    });
+  },
+
+  bindDownvote: function () {
+    let self = this;
+
+    $("#downvote").click(function (e) {
+      e.preventDefault();
+      if (!paused) {
+        self.downvotesRef.push({ created_at: firebase.database.ServerValue.TIMESTAMP })
+      } else {
+        console.log("Click does nothing");
+      }
+    });
+  },
+
+  bindSearchForm: function () {
+    let self = this;
+
+    $("#search-form").submit(function (e) {
+      e.preventDefault();
+
+      let query = $("#search").val().trim();
+
+      $("#search-results").empty();
+
+      $.ajax({
+        data: {
+          q: query,
+          type: "track"
+        },
+        method: "GET",
+        url: "https://api.spotify.com/v1/search"
+      }).then(function (response) {
+        let tracks = response.tracks;
+        $.each(tracks.items, function (index, trackInfo) {
+          self.appendTrack("#search-results", trackInfo)
+        });
+      });
+    });
+  },
+
+  appendTrack: function (container_selector, trackInfo) {
+    let albumImage = trackInfo.album.images[2].url;
+    let artist = trackInfo.artists.map(({ name }) => name).join(', ');
+
+    let trackBody = $("<div>")
+      .addClass("align-self-center media-body")
+      .append($("<h6>").text(trackInfo.name))
+      .append($("<p>").text(artist));
+    let trackTemplate = $("<li>")
+      .addClass("track media")
+      .append($("<img>").attr("src", albumImage).addClass("align-self-center"))
+      .append(trackBody)
+      .append(
+        $(
+          "<button>",
+          {
+            class: 'add-to-playlist btn btn-sm align-self-center',
+            "data-uri": trackInfo.uri,
+            text: 'ADD',
+          }
+        )
+      );
+
+    $(container_selector).append(trackTemplate);
+  },
+
+  getPlaylistInfo: function () {
+    let self = this;
+
+    $.ajax({
+      method: "GET",
+      url: "https://api.spotify.com/v1/playlists/" + self.configuration.spotifyPlaylistId
+    }).then(function (response) {
+      console.log(response);
+      self.playlistUri = response.uri;
+      for (let i = 0; i < response.tracks.items.length; i++) {
+        let trackInfo = response.tracks.items[i].track;
+        let albumInfo = trackInfo.album;
+
+        $("#playlist-name").text(response.name);
+        $("#album-art").attr("src", albumInfo.images[1].url)
+      };
+    });
+  },
+
+  listenToPlayerStatus: function () {
+    this.playerRef.on("value", function (playerSnapshot) {
+      if (playerSnapshot.val()) {
+        let playerStatus = playerSnapshot.val().paused ? 'Paused' : 'Playing';
+
+        paused = playerSnapshot.val().paused;
+
+        $("#song-playing").text(playerSnapshot.val().song)
+        $("#artist-playing").text(playerSnapshot.val().artist)
+        $("#player-status").text(playerStatus);
+
+      } else {
+        this.playerRef.set({
           paused: true
         });
       }
