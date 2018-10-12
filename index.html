@@ -27,7 +27,9 @@
         $("#authorize").on("click", function (e) {
             e.preventDefault();
             let client_id = "22c6bf8f33e4445896f7dfd87a6ebec4";
-            let redirect_uri = window.location.origin + "/setup.html";
+            let redirect_uri = window.location.origin +
+                window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) +
+                "/setup.html";
             let scopes = [
                 'streaming',
                 'user-read-birthdate',
