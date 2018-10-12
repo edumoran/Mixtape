@@ -56,3 +56,22 @@ body {
     cursor: pointer;
     border: none;
 }
+
+.swal-button {
+    padding: 7px 19px;
+    border-radius: 2px;
+    background-color: #38bbd3;
+    font-size: 12px;
+    border: 1px solid #38bbd3;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.swal-text {
+    background-color: white;
+    border: 1px solid white;
+    display: block;
+    text-align: center;
+    color: #61534e;
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+}  
+  

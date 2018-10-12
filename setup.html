@@ -32,6 +32,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
     <script src="assets/javascript/database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
     <script>
         const SEARCH_PARAMS = new URLSearchParams(window.location.search);
         const TOKEN = window.location.hash.split("=")[1];
@@ -89,7 +90,7 @@
                             alert(error);
                         });
                 } else {
-                    alert("You need to select a playlist");
+                    swal("You need to select a playlist!")
                 }
             });
         });
