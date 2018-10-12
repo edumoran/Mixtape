@@ -96,13 +96,8 @@
         function listenToPlayerStatus() {
             PLAYER_REF.on("value", function (playerSnapshot) {
                 if (playerSnapshot.val()) {
-<<<<<<< HEAD
-
-                    $("#song-playing").text(`${playerSnapshot.val().song} - ${playerSnapshot.val().artist}`)
-=======
                     $("#song-playing").text(playerSnapshot.val().song);
                     $("#artist").text(playerSnapshot.val().artist);
->>>>>>> dde9b46... Host site
 
                 } else {
                     PLAYER_REF.set({
@@ -195,15 +190,10 @@
             // Playback status updates
             player.addListener('player_state_changed', state => {
                 console.log("Player state changed", state);
-<<<<<<< HEAD
-                let currentTrack = state.track_window.current_track;
-                let artist = currentTrack.artists.map(({ name }) => name).join(', ');
-=======
                 let current_track = state.track_window.current_track;
                 let artist = current_track.artists.map(({
                     name
                 }) => name).join(', ');
->>>>>>> dde9b46... Host site
 
                 let status = {
                     duration: state.duration,
