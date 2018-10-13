@@ -9,7 +9,7 @@ const app = {
   },
 
   spotifyAppClientId: '22c6bf8f33e4445896f7dfd87a6ebec4',
-  spotifyAuthorizationCallbackUrl: window.location.origin + "/setup.html",
+  spotifyAuthorizationCallbackUrl: window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) + "/setup.html",
   spotifyScopes: [
     'streaming',
     'user-read-birthdate',
