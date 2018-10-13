@@ -1,9 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 body {
     background: url(../images/splash_background.png) fixed;
     background-size: cover;
-    font-family: "Helvetica", sans-serif;
-    font-family: roboto;
-    color: white;
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
 }
 
 .masthead {
@@ -50,7 +51,7 @@ body {
     border-radius: 7px;
     margin-left: 10px;
     border-radius: 5px;
-    background: rgb(56, 187, 211);
+    background: #38bbd3;
     color: white;
     align-content: center;
     cursor: pointer;
@@ -67,11 +68,9 @@ body {
 }
 
 .swal-text {
-    background-color: white;
-    border: 1px solid white;
+    background-color: #fff;
+    border: 1px solid #fff;
     display: block;
     text-align: center;
     color: #61534e;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
 }  
-  
