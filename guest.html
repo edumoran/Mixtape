@@ -1,226 +1,68 @@
 <!doctype html>
 <html lang="en-US">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/style-guest.css">
-    <title>Guest</title>
 
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <title>Guest</title>
 
-  <body>
-    <div class="container d-flex w-100 h-100 mx-auto flex-column">
-      <header>
-        <div class="align-self-center" id="playlist-info">
-          <h4 id="playlist-name"></h4>
+</head>
+
+<body class="guest">
+  <div class="container d-flex w-100 h-100 mx-auto flex-column p-0">
+    <header>
+      <div class="align-self-center" id="playlist-info">
+        <h4 id="playlist-name"></h4>
+      </div>
+      <div class="media" id="track-info">
+        <img class="align-self-center img-fluid" id="album-art" src="assets/images/logo.png" alt="Generic placeholder image">
+        <div class="align-self-center media-body">
+          <h3 id="song-playing"></h3>
+          <h6 id="artist-playing"></h6>
+          <button class="btn" id="downvote">
+            <i class="far fa-thumbs-down"></i> Next song!
+          </button>
+
         </div>
-        <div class="media" id="track-info">
-          <img class="align-self-center img-fluid" id="album-art" src="assets/images/logo.png" alt="Generic placeholder image">
-          <div class="align-self-center media-body">
-            <h4 id="song-playing">NAME OF THE SONG</h4>
-            <h6 id="artist-playing">Artist</h6>
+      </div>
+    </header>
 
-            <button class="btn btn-danger rounded" id="downvote">Next!</button>
-            
+    <main>
+      <section>
+        <form id="search-form">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="SEARCH" id="search">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+            </div>
           </div>
-        </div>
-      </header>
-
-      <main>
-        <section>
-            <form id="search-form">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="SEARCH" id="search">
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
-                  </div>
-                </div>
-            </form>
-          </section>
-        <section id="results">
-          <ul class="list-unstyled" id="search-results"></ul>
-        </section>
-      </main>
-      <footer>
-        <img class="align-self-center" id="footer-logo" src="assets/images/logo_no-shadow.png" alt="Generic placeholder image">
-      </footer>
-    </div>
+        </form>
+      </section>
+      <section id="results">
+        <ul class="list-unstyled" id="search-results"></ul>
+      </section>
+    </main>
+    <footer>
+      <img class="align-self-center" id="footer-logo" src="assets/images/logo_no-shadow.png" alt="Generic placeholder image">
+    </footer>
+  </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
-  <script src="assets/javascript/database.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+  <script src="assets/javascript/app.js"></script>
+  <script src="assets/javascript/app/guest.js"></script>
   <script>
-    const CONFIG_REF = firebase.database().ref("config");
-    const DOWNVOTES_REF = firebase.database().ref("downvotes");
-    const PLAYER_REF = firebase.database().ref("player");
-    const PLAYLIST_REF = firebase.database().ref("playlist");
-    var config = undefined;
-    var paused = false;
-
-    $(document).ready(() => {
-      loadConfig();
-      listenToDownvotes();
-      listenToPlayerStatus();
-    });
-
-    function loadConfig() {
-      CONFIG_REF.once("value", function (snapshot) {
-        if (snapshot.val()) {
-          config = snapshot.val();
-          bindAddToPlaylist();
-          bindDownvote();
-          bindSearchForm();
-          getPlaylistInfo();
-        }
-      });
-    }
-
-    function listenToDownvotes() {
-      DOWNVOTES_REF.on("value", function (downvotesSnapshot) {
-        $("#downvotes").text(downvotesSnapshot.numChildren());
-      });
-    }
-
-    function bindSearchForm() {
-      $("#search-form").submit(function (e) {
-        e.preventDefault();
-
-        let query = $("#search").val().trim();
-
-        $("#search-results").empty();
-
-        $.ajax({
-          url: "https://api.spotify.com/v1/search",
-          method: "GET",
-          data: {
-            q: query,
-            type: "track"
-          },
-          beforeSend: function (xhr, settings) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
-          },
-
-          success: (response) => {
-            let tracks = response.tracks;
-            $.each(tracks.items, function (index, trackInfo) {
-              appendTrack("#search-results", trackInfo)
-            });
-          }
-        });
-
-      });
-    }
-
-    function appendTrack(container_selector, trackInfo) {
-      console.log(trackInfo);
-      let albumImage = trackInfo.album.images[2].url;
-      let artist = trackInfo.artists.map(({ name }) => name).join(', ');
-
-      let trackBody = $("<div>")
-        .addClass("align-self-center media-body")
-        .append($("<h6>").text(trackInfo.name))
-        .append($("<p>").text(artist));
-      let trackTemplate = $("<li>")
-        .addClass("track media")
-        .append($("<img>").attr("src", albumImage).addClass("align-self-center"))
-        .append(trackBody)
-        .append(
-          $(
-            "<button>",
-            {
-              class: 'add-to-playlist btn btn-sm align-self-center',
-              "data-uri": trackInfo.uri,
-              text: 'ADD',
-            }
-          )
-        );
-      $(container_selector).append(trackTemplate);
-    }
-
-    function listenToPlayerStatus() {
-      PLAYER_REF.on("value", function (playerSnapshot) {
-        if (playerSnapshot.val()) {
-          let playerStatus = playerSnapshot.val().paused ? 'Paused' : 'Playing';
-
-          paused = playerSnapshot.val().paused;
-
-          $("#song-playing").text(`${playerSnapshot.val().song}`)
-          $("#artist-playing").text(`${playerSnapshot.val().artist}`)
-          $("#player-status").text(playerStatus);
-
-        } else {
-          PLAYER_REF.set({
-            paused: true
-          });
-        }
-      });
-    }
-
-    function bindAddToPlaylist() {
-      $(document).on("click", ".add-to-playlist", function (e) {
-        swal("You added a song to the mixtape!")
-        let uri = $(this).attr("data-uri");
-        addTrackToSpotifyPlaylist(uri);
-      });
-    }
-
-    function addTrackToSpotifyPlaylist(uri) {
-      $.ajax({
-        url: "https://api.spotify.com/v1/playlists/" + config.spotifyPlaylistId + "/tracks",
-        method: "POST",
-        data: JSON.stringify({
-          uris: [uri]
-        }),
-        beforeSend: function (xhr, settings) {
-          xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
-        },
-
-        success: (response) => {
-          PLAYLIST_REF.push({
-            uri: uri,
-            created_at: firebase.database.ServerValue.TIMESTAMP
-          });
-        }
-      });
-    }
-
-    function getPlaylistInfo() {
-      $.ajax({
-          url: "https://api.spotify.com/v1/playlists/" + config.spotifyPlaylistId,
-          method: 'GET',
-          success: function (data, status) {
-              console.log(data);
-              playlistUri = data.uri;
-              for (let i = 0; i < data.tracks.items.length; i++) {
-                let trackInfo = data.tracks.items[i].track;
-                let albumInfo = trackInfo.album;
-                $("#playlist-name").text(data.name);
-                $("#album-art").attr("src", albumInfo.images[1].url)
-              };
-          },
-
-          beforeSend: function (xhr, settings) {
-              xhr.setRequestHeader('Authorization', 'Bearer ' + config.token);
-          }
-      });
-    };
-
-    function bindDownvote() {
-      $("#downvote").click(function (e) {
-        swal("You voted to skip the song.")
-        e.preventDefault();
-        if (!paused) {
-          DOWNVOTES_REF.push({ created_at: firebase.database.ServerValue.TIMESTAMP })
-        } else {
-          console.log("Click does nothing");
-        }
-      });
-    }
+    app.guest.new();
   </script>
 </body>
 

@@ -1,53 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     <title>Welcome to Mixtape</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-
 </head>
 
 <body>
-
-    <header class="masthead d-flex">
-        <div class="container text-center my-auto">
-            <img src="assets/images/logo_no-shadow.png" class="img-fluid mx-auto d-block" id="mixtape">
-            <a class="btn" id="authorize" href="#">START THE PARTY</a>
+    <main class="d-flex w-100">
+        <div class="container text-center mt-auto mb-auto">
+            <img id="mixtape" class="img-fluid mx-auto d-block" src="assets/images/logo_no-shadow.png">
+            <a id="authorize" class="btn" href="#">START THE PARTY</a>
         </div>
-    </header>
-
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="assets/javascript/app.js"></script>
+    <script src="assets/javascript/app/autorizationRequester.js"></script>
     <script>
-        $("#authorize").on("click", function (e) {
-            e.preventDefault();
-            let client_id = "22c6bf8f33e4445896f7dfd87a6ebec4";
-            let redirect_uri = window.location.origin +
-                window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) +
-                "/setup.html";
-            let scopes = [
-                'streaming',
-                'user-read-birthdate',
-                'user-read-email',
-                'user-read-private',
-                'playlist-modify-private',
-                'playlist-modify-public'
-            ];
-
-            let url = "https://accounts.spotify.com/authorize?" +
-                "client_id=" + client_id +
-                "&redirect_uri=" + redirect_uri +
-                "&scope=" + scopes.join(" ") +
-                "&response_type=token" +
-                "&show_dialog=true";
-
-            window.location = url;
-        });
+        app.authorizationRequester.new();
     </script>
 </body>
 
