@@ -13,6 +13,7 @@ app.host = {
 
     this.resetDownvotes();
     this.listenToDownvotes();
+    this.listenToPlaylist();
     return false;
   },
 
@@ -262,5 +263,13 @@ app.host = {
         self.discardedSongSound.play();
       }
     })
+  },
+
+  listenToPlaylist: function () {
+    let self = this;
+
+    app.playlistRef.on("value", function (snapshot) {
+      $("#playlist-track-count").text(snapshot.numChildren());
+    });
   }
 };
