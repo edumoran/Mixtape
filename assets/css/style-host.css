@@ -83,3 +83,7 @@ figcaption {
     clear: both;
     height: 35px;
 }
+
+.track.playing {
+    color:  rgb(56, 187, 211) !important;
+}

@@ -80,6 +80,7 @@ app.host = {
   appendTrack: function ({ artist, image, id, name }) {
     let track = $("<p>")
       .addClass("track")
+      .attr("id", id)
       .append($("<img>").attr("src", image))
       .append($("<span>").html(artist + " <br/><i>" + name + "</i>"));
 
@@ -104,10 +105,11 @@ app.host = {
       }
 
       playlist[track.id] = {
-        name: track.name,
         artist: track.artists.map(({ name }) => name).join(', '),
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        id: track.id,
         image: track.album.images[track.album.images.length - 1].url,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
+        name: track.name
       };
 
       return playlist;
@@ -146,23 +148,34 @@ app.host = {
 
     // Playback status updates
     self.player.addListener('player_state_changed', state => {
+      console.log(state);
       let currentTrack = state.track_window.current_track;
       let artist = currentTrack.artists.map(({ name }) => name).join(', ');
       let image = currentTrack.album.images[0].url;
+      let trackId = currentTrack.linked_from.id;
+
+      console.log(trackId);
+      // Handle id
+      if (trackId === null) {
+
+        trackId = currentTrack.id;
+      }
+
       let status = {
         artist,
         duration: state.duration,
         image,
         paused: state.paused,
         position: state.position,
-        song: currentTrack.name
+        trackId,
+        song: currentTrack.name,
       }
 
-      if (self.currentTrackId !== currentTrack.id) {
+      if (self.currentTrackId !== trackId) {
         self.resetDownvotes();
       }
 
-      self.currentTrackId = currentTrack.id
+      self.currentTrackId = trackId;
 
       self.updatePlayerStatus(status);
     });
@@ -223,6 +236,8 @@ app.host = {
         $("#playlist-image").attr("src", playerSnapshot.val().image);
         if (!playerSnapshot.val().paused) {
           $("#play-pause").text("PAUSE");
+          $(".track").removeClass("playing");
+          $("#" + playerSnapshot.val().trackId).addClass("playing");
         }
       }
     });
