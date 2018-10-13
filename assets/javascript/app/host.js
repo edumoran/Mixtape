@@ -52,7 +52,11 @@ app.host = {
       self.savePreviousTracksToDb(response.tracks.items);
       self.initializePlayer();
     }).fail(function ({ responseJSON: { error } }) {
-      console.log(error.message);
+      swal({
+        title: 'Error!',
+        text: error.message,
+        icon: 'error'
+      });
     });
   },
 
@@ -63,7 +67,7 @@ app.host = {
     if (playlistInfo.images.length > 0) {
       $("#playlist-image").attr("src", playlistInfo.images[0].url);
     } else {
-      $("#playlist-image").attr("src", "./assets/images/logo_no-shadow.png");
+      $("#playlist-image").attr("src", "./assets/images/logo.png");
     }
   },
 
@@ -78,11 +82,16 @@ app.host = {
   },
 
   appendTrack: function ({ artist, image, id, name }) {
-    let track = $("<p>")
-      .addClass("track")
+    let trackBody = $("<div>")
+      .addClass("media-body")
+      .append($("<h5>").text(name))
+      .append($("<p>").text(artist));
+
+    let track = $("<div>")
+      .addClass("media track")
       .attr("id", id)
-      .append($("<img>").attr("src", image))
-      .append($("<span>").html(artist + " <br/><i>" + name + "</i>"));
+      .append($("<img>").attr("src", image).addClass("align-self-center mr-3"))
+      .append(trackBody);
 
     $("#tracks").append(track);
   },
@@ -148,16 +157,13 @@ app.host = {
 
     // Playback status updates
     self.player.addListener('player_state_changed', state => {
-      console.log(state);
       let currentTrack = state.track_window.current_track;
       let artist = currentTrack.artists.map(({ name }) => name).join(', ');
       let image = currentTrack.album.images[0].url;
       let trackId = currentTrack.linked_from.id;
 
-      console.log(trackId);
       // Handle id
       if (trackId === null) {
-
         trackId = currentTrack.id;
       }
 

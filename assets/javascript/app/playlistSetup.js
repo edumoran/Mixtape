@@ -76,7 +76,11 @@ app.playlistSetup = {
       if ($("#playlist").val() !== '') {
         self.saveConfiguration();
       } else {
-        alert("You need to select a playlist");
+        swal({
+          title: 'Error!',
+          text: 'You need to select a playlist!',
+          icon: 'error'
+        });
       }
     });
   },
@@ -89,7 +93,7 @@ app.playlistSetup = {
     }).then(function () {
       window.location = "host.html";
     }).catch(function (error) {
-      alert(error);
+      swal(error);
     });
   },
 

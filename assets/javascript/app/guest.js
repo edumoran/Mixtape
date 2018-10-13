@@ -42,6 +42,11 @@ app.guest = {
       }).done(function (response) {
         self.addTrackToDb(trackInfo);
         button.remove();
+        swal({
+          title: "Yeah!",
+          text: "You added a song to the mixtape",
+          icon: "success"
+        });
       }).fail(function ({ responseJSON: { error } }) {
         console.log(error.message)
       });
@@ -72,8 +77,12 @@ app.guest = {
       e.preventDefault();
       if (!self.paused) {
         app.downvotesRef.push({ created_at: firebase.database.ServerValue.TIMESTAMP })
-      } else {
-        console.log("Click does nothing");
+        $(this).hide();
+        swal({
+          title: "Next Song!",
+          text: "You voted to skip this song",
+          icon: "success"
+        });
       }
     });
   },
@@ -112,7 +121,7 @@ app.guest = {
 
     let trackBody = $("<div>")
       .addClass("align-self-center media-body")
-      .append($("<h6>").text(trackInfo.name))
+      .append($("<h5>").text(trackInfo.name))
       .append($("<p>").text(artist));
 
     let button = $("<button>")

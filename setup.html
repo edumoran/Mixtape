@@ -13,25 +13,28 @@
 </head>
 
 <body>
-    <header class="masthead d-flex">
-        <div class="container text-center my-auto">
+    <main class="d-flex w-100">
+        <div class="container text-center mt-auto mb-auto">
             <img id="mixtape" class="img-fluid mx-auto d-block" src="assets/images/logo_no-shadow.png">
 
             <section id="playlist-selection" class="d-none">
-                <div class="btn-group">
+                <div class="input-group mb-3">
                     <select id="playlist" class="form-control">
-                        <option value="">SELECT FROM YOUR PLAYLISTS</option>
+                        <option value="">SELECT ONE OF YOUR PLAYLISTS...</option>
                     </select>
-                    <a id="setup" class="btn">LOAD</a>
+                    <div class="input-group-append">
+                        <button id="setup" class="btn" type="button" id="button-addon2">LOAD</button>
+                    </div>
                 </div>
             </section>
 
             <section id="error"></section>
         </div>
-    </header>
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
     <script src="assets/javascript/app.js"></script>
     <script src="assets/javascript/app/playlistSetup.js"></script>
     <script>

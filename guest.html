@@ -8,13 +8,13 @@
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
     crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/css/style-guest.css">
+  <link rel="stylesheet" href="assets/css/style.css">
   <title>Guest</title>
 
 </head>
 
-<body>
-  <div class="container d-flex w-100 h-100 mx-auto flex-column">
+<body class="guest">
+  <div class="container d-flex w-100 h-100 mx-auto flex-column p-0">
     <header>
       <div class="align-self-center" id="playlist-info">
         <h4 id="playlist-name"></h4>
@@ -24,7 +24,9 @@
         <div class="align-self-center media-body">
           <h3 id="song-playing"></h3>
           <h6 id="artist-playing"></h6>
-          <button class="btn btn-danger rounded" id="downvote">Next!</button>
+          <button class="btn" id="downvote">
+            <i class="far fa-thumbs-down"></i> Next song!
+          </button>
 
         </div>
       </div>
