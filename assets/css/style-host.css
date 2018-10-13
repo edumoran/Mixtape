@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 body {
     background: url(../images/app_background.png) fixed;
     background-size: cover;
-    font-family: "Helvetica", sans-serif;
-    font-family: roboto;
+    font-family: 'Roboto', sans-serif;
     color: white;
 }
-#play-wrapper {
+#play-wrapper,
+figcaption {
     text-align: center;
 }
 .sidenav {
@@ -39,8 +41,8 @@ body {
     border-radius: 7px;
     margin-left: 10px;
     border-radius: 5px;
-    background: rgb(56, 187, 211);
-    color: white;
+    background: #00B8D1;
+    color: #fff;
     align-content: center;
     cursor: pointer;
     border: none;
