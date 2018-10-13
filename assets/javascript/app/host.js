@@ -1,7 +1,7 @@
 app.host = {
   configuration: undefined,
   discardedSongSound: new Audio("assets/sounds/air-horn.wav"),
-  guestUrl: window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) + "guest.html",
+  guestUrl: window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) + "/guest.html",
   player: undefined,
 
   new: function () {
